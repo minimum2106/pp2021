@@ -26,7 +26,6 @@ def insertCourseMark(course) :
     for i in range(len(students)):
         mark = input("Mark of " + students[i]["name"] + " is: ")
         marks[len(marks) - 1][course].update({students[i]["name"]: validatedMark(mark)})
-    print(marks)
 
 def showCourses():
     print("Courses \n" + str(courses))
