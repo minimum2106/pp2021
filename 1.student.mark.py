@@ -33,7 +33,7 @@ def showCourses():
 def showStudents():
     print("Student \n"+ str(students))
 
-def showSpecificCourse(course):
+def showSpecificCourseMarks(course):
     print("The mark of this course is: ")
     for i in range(len(marks)):
         markKeys = marks[i].keys()
@@ -85,7 +85,7 @@ def run():
         showStudents()
         specificCourse = input("Enter the course you want to see the mark \n ")
         if (validateCourse(specificCourse)):
-            showSpecificCourse(specificCourse)
+            showSpecificCourseMarks(specificCourse)
         else:
             print("You enter a wrong course !!!!")
 run() 
