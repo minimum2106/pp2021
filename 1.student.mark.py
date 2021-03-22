@@ -66,20 +66,17 @@ def run():
         print("Course " + str(i + 1) + " info: ")
         course = courseInfo()
         courses.append(course)
-    print("Do you want to enter the marks for any registered coures ? yes / no")
-    enter = input()
+    enter = input("Do you want to enter the marks for any registered coures ? yes / no")
     while(enter == "yes"):
         inputCourse = input("The course you want to enter the marks is: ")
         if(validateCourse(inputCourse)):
             insertCourseMark(inputCourse)
-            print("Do you want to enter the mark of other course ? yes / no")
-            enter = input()
+            enter = input("Do you want to enter the mark of other course ? yes / no")
         else:
             print("This course does not exist")
             print("Do you want to re enter the name ?")
             enter = input()
-    print("Do you want to see the student list and course list ? yes / no")
-    show = input()
+    show = input("Do you want to see the student list and course list ? yes / no")
     if (show == "yes"):
         showCourses()
         showStudents()
