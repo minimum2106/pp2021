@@ -168,10 +168,25 @@ def containCourse(course, courses):
             return i
     return -1
 
+def sort(students):
+    for i in range(len(students) - 1):
+        for j in range(len(students) - i - 1):
+            if students[j].gpa() < students[j + 1].gpa():
+                students[j], students[j + 1] = students[j + 1], students[j] 
+
 def showGpa(students):
+    stdDesc= []
     print('Gpa of this class : ')
     for student in students:
-        print(f'   + {student.getName()}: {student.gpa()} ')
+        stdDesc.append(student)
+
+    sort(stdDesc)
+            
+    for std in stdDesc:
+        print(f'   + {std.getName()}: {std.gpa()}')
+                    
+
+
     
 
 if __name__ == "__main__":
@@ -192,7 +207,7 @@ if __name__ == "__main__":
         # while(not(course.repOk(name))):
         #     print('Your input is not in correct form. Please re-enter')
         #     name = input('   + Enter course name: ')
-        credit = input('   + Enter the number of credit of this course: ')
+        credit = input('   + Enter course number of credit: ')
         courses.append(Course(name, credit))
     
     user_input = input("- Do you want to input marks for any course ? ")
