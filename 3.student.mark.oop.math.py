@@ -1,25 +1,25 @@
-import math 
-import numpy as np
+import math
 import curses
+
 
 class Student:
     __id_count = 0
 
-    def __validateName(self, name):
-        if (len(name) > 1 ):
+    def __validate_name(self, name):
+        if len(name) > 1:
             return True
         return False
 
-    def __validateDoB(self, dob):
-        if (len(dob) > 1):
+    def __validate_dob(self, dob):
+        if len(dob) > 1:
             return True
         return False
 
     def __init__(self, name, DoB):
-        if (self.__validateName(name) == False):
+        if not(self.__validate_name(name)):
             print("Name is not valid")
             return
-        if (self.__validateDoB(DoB) == False):
+        if not(self.__validate_dob(DoB)):
             print("DoB is not valid")
             return
 
@@ -28,25 +28,25 @@ class Student:
         self.__name = name
         self.__marks = {}
     
-    def getName(self):
+    def get_name(self):
         return self.__name
     
-    def setName(self, name):
-        if(self.__validateName(name)):
+    def set_name(self, name):
+        if self.__validate_name(name):
             self.__name = name
             return 
         print("Name is not valid")
     
-    def getId(self):
+    def get_id(self):
         return self.__id
     
-    def getDoB(self):
+    def get_dob(self):
         return self.__DoB
 
-    def setDoB(self, dob):
+    def set_dob(self, dob):
         self.__DoB = dob
     
-    def updateMark(self,course, credit, mark):
+    def update_mark(self, course, credit, mark):
         self.__marks.update({course: [credit, mark]})
 
     def gpa(self):
@@ -58,41 +58,36 @@ class Student:
         
         return sum / total
 
-
-
-    
-    
     # @staticmethod
     # def repOk(name, dob):
     #     if (__validateName(name) and __validateDoB(dob)):
     #         return True
     #     return False
-    
 
 
 class Course:
     __id_count = 0
 
-    def __validateName(self, name):
-        if(len(name) > 1):
+    def __validate_name(self, name):
+        if len(name) > 1:
             return True
         return False
 
-    def __validateMark(self, mark):
-        if ( float(mark) >= 0 and float(mark) <= 100):
+    def __validate_mark(self, mark):
+        if 0 <= float(mark) <= 100:
             return True
         return False
 
-    def __validateCredit(self, credit):
-        if (int(credit) >=1 and int(credit) <= 4):
+    def __validate_credit(self, credit):
+        if 1 <= int(credit) <= 4:
             return True
         return False 
     
     def __init__(self, name, credit):
-        if(not(self.__validateName(name))):
+        if not(self.__validate_name(name)):
             print("- The name of the course is not valid")
             return 
-        if(not(self.__validateCredit(credit))):
+        if not(self.__validate_credit(credit)):
             print("- The number of credits is not valid")
         
         self.__name = name
@@ -106,68 +101,72 @@ class Course:
     #         return True
     #     return False
 
-    def floorMark(self, mark):
+    def floor_mark(self, mark):
         return math.floor(float(mark) * 10) / 10
 
-    def getName(self):
+    def get_name(self):
         return self.__name
     
-    def setName(self, name):
-        if (self.__validateName(name)):
+    def set_name(self, name):
+        if self.__validate_name(name):
             self.__name = name
 
-    def getId(self):
+    def get_id(self):
         return self.__id
     
     def setCredit(self, credit):
-        if(self.__validateCredit(credit)):
+        if self.__validate_credit(credit):
             self.__credit = int(credit)
-    
-    def getCredit(self):
+
+    def get_credit(self):
         return self.__credit
-    
-    def setMark(self, students):
+
+    def set_mark(self, students):
         for student in students:
-            stdName = student.getName()
-            mark = input(f'   + mark of {stdName}: ')
-            while (not(self.__validateMark(mark))):
+            std_name = student.getName()
+            mark = input(f'   + mark of {std_name}: ')
+            while not(self.__validate_mark(mark)):
                 print('The input mark is not valid \n')
                 mark = input('Please re-enter the mark: ')
             
-            mark = self.floorMark(mark)
-            self.__marks.update({stdName: mark})
+            mark = self.floor_mark(mark)
+            self.__marks.update({std_name: mark})
             student.updateMark(self.__name, self.__credit, mark)
      
     def describe(self):
         print(f'- The marks for {self.__name} is:')
         for key, value in self.__marks.items():
             print(f'   + {key}: {value}')
-    
 
 
-def stdNum():
+def std_num():
     num = int(input("- The number of students in the class: "))
     return num
 
-def courseNum():
+
+def course_num():
     num = int(input("- The number of courses is: "))
     return num
 
-def showCourses(courses):
+
+def show_course(courses):
     print('- All courses that this class is currently taking: ')
     for course in courses:
-        print(f'   + {course.getId()}. {course.getName()} ')
+        print(f'   + {course.get_id()}. {course.get_name()} ')
 
-def showStudents(students):
+
+def show_students(students):
     print('- Student of this class: ')
     for student in students:
-        print(f'   + {student.getId()}. {student.getName()} ')
+        print(f'   + {student.get_id()}. {student.get_name()} ')
 
-def containCourse(course, courses):
+
+def contain_course(course, courses):
     for i in range(len(courses)):
-        if (course == courses[i].getName()):
+        if course == courses[i].getName():
             return i
     return -1
+
 
 def sort(students):
     for i in range(len(students) - 1):
@@ -175,36 +174,40 @@ def sort(students):
             if students[j].gpa() < students[j + 1].gpa():
                 students[j], students[j + 1] = students[j + 1], students[j] 
 
-def showGpa(students):
-    stdDesc= []
+
+def show_gpa(students):
+    std_desc = []
     print('Gpa of this class : ')
     for student in students:
-        stdDesc.append(student)
+        std_desc.append(student)
 
-    sort(stdDesc)
+    sort(std_desc)
             
-    for std in stdDesc:
-        print(f'   + {std.getName()}: {std.gpa()}')
-                    
+    for std in std_desc:
+        print(f'   + {std.get_name()}: {std.gpa()}')
+
+
 menu = ['AddStudent', 'AddCourse', 'Exit']
 
-def printMenu(stdsrc, selected_row): 
-    stdsrc.clear()
 
-    h, w = stdsrc.getmaxyx()
+def print_menu(stdscr, selected_row):
+    stdscr.clear()
 
-    for indx, row in enumerate(menu):
+    h, w = stdscr.getmaxyx()
+
+    for index, row in enumerate(menu):
         x = w//2 - len(row)//2
-        y = h//2 - len(menu)// + indx
+        y = h//2 - len(menu) + index
 
-        if indx == selected_row:
-            stdsrc.attron(curses.color_pair(1))
-            stdsrc.addstr(y, x, row)
-            stdsrc.attroff(curses.color_pair(1))
+        if index == selected_row:
+            stdscr.attron(curses.color_pair(1))
+            stdscr.addstr(y, x, row)
+            stdscr.attroff(curses.color_pair(1))
         else:
-            stdsrc.addstr(y, x, row)
+            stdscr.addstr(y, x, row)
 
-    stdsrc.refresh()
+    stdscr.refresh()
+
 
 def main(stdscr):
     curses.curs_set(0)
@@ -212,7 +215,7 @@ def main(stdscr):
 
     current_row = 0
 
-    printMenu(stdscr, current_row)
+    print_menu(stdscr, current_row)
 
     while 1:
         key = stdscr.getch()
@@ -223,7 +226,7 @@ def main(stdscr):
             current_row -= 1
         elif key == curses.KEY_DOWN and current_row < len(menu):
             current_row += 1 
-        elif key ==  curses.KEY_ENTER or key in [10, 13]:
+        elif key == curses.KEY_ENTER or key in [10, 13]:
             stdscr.refresh()
             stdscr.getch()
 
@@ -232,12 +235,13 @@ def main(stdscr):
     
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
+
 if __name__ == "__main__":
     curses.wrapper(main)
     students = []
     courses = []
 
-    for i in range(stdNum()):
+    for i in range(std_num()):
         print('- Enter information of this student: ')
 
         name = input('   + Enter student name: ')
@@ -245,7 +249,7 @@ if __name__ == "__main__":
     
         students.append(Student(name, dob))
 
-    for i in range(courseNum()):
+    for i in range(course_num()):
         print('- Enter information of this course: ')
         name = input('   + Enter course name: ')
         # while(not(course.repOk(name))):
@@ -255,20 +259,16 @@ if __name__ == "__main__":
         courses.append(Course(name, credit))
     
     user_input = input("- Do you want to input marks for any course ? ")
-    courseIndex = containCourse(user_input, courses)
-    if (courseIndex < -1):
+    courseIndex = contain_course(user_input, courses)
+    if courseIndex < -1:
         print("- There is no course like that")
     else:
-        courses[courseIndex].setMark(students)
+        courses[courseIndex].set_mark(students)
         courses[courseIndex].describe()
 
     ans = input("- Do you want to print out students and courses ? yes/no ")
-    if (ans == "yes"):
-        showStudents(students)
-        showCourses(courses)
+    if ans == "yes":
+        show_students(students)
+        show_course(courses)
 
-    showGpa(students)
-    
-
-
-
+    show_gpa(students)
