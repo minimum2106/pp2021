@@ -1,5 +1,6 @@
 import math 
 import numpy as np
+import curses
 
 class Student:
     __id_count = 0
@@ -185,11 +186,54 @@ def showGpa(students):
     for std in stdDesc:
         print(f'   + {std.getName()}: {std.gpa()}')
                     
+menu = ['AddStudent', 'AddCourse', 'Exit']
 
+def printMenu(stdsrc, selected_row): 
+    stdsrc.clear()
 
+    h, w = stdsrc.getmaxyx()
+
+    for indx, row in enumerate(menu):
+        x = w//2 - len(row)//2
+        y = h//2 - len(menu)// + indx
+
+        if indx == selected_row:
+            stdsrc.attron(curses.color_pair(1))
+            stdsrc.addstr(y, x, row)
+            stdsrc.attroff(curses.color_pair(1))
+        else:
+            stdsrc.addstr(y, x, row)
+
+    stdsrc.refresh()
+
+def main(stdscr):
+    curses.curs_set(0)
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+
+    current_row = 0
+
+    printMenu(stdscr, current_row)
+
+    while 1:
+        key = stdscr.getch()
+
+        stdscr.clear()
+
+        if key == curses.KEY_UP and current_row > 0:
+            current_row -= 1
+        elif key == curses.KEY_DOWN and current_row < len(menu):
+            current_row += 1 
+        elif key ==  curses.KEY_ENTER or key in [10, 13]:
+            stdscr.refresh()
+            stdscr.getch()
+
+            if current_row == len(menu) - 1:
+                break
     
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
 if __name__ == "__main__":
+    curses.wrapper(main)
     students = []
     courses = []
 
