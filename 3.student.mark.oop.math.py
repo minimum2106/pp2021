@@ -114,20 +114,21 @@ class Course:
     def get_id(self):
         return self.__id
     
-    def setCredit(self, credit):
+    def set_credit(self, credit):
         if self.__validate_credit(credit):
             self.__credit = int(credit)
 
     def get_credit(self):
         return self.__credit
 
-    def set_mark(self, students):
+    def set_mark(self, students, stdscr):
         for student in students:
             std_name = student.getName()
-            mark = input(f'   + mark of {std_name}: ')
+            stdscr.addstr(3, 0, f"Mark of {student.get_name()}: ")
+            mark = stdscr.getstr(4, 0).decode()
             while not(self.__validate_mark(mark)):
-                print('The input mark is not valid \n')
-                mark = input('Please re-enter the mark: ')
+                stdscr.addstr(5, 0, 'The input mark is not valid')
+                mark = stdscr.getstr(6, 0).decode()
             
             mark = self.floor_mark(mark)
             self.__marks.update({std_name: mark})
@@ -187,7 +188,13 @@ def show_gpa(students):
         print(f'   + {std.get_name()}: {std.gpa()}')
 
 
-menu = ['AddStudent', 'AddCourse', 'Exit']
+menu = ['Number of student',
+        'Number of courses',
+        "Add course mark",
+        'Show student list',
+        'Show course list',
+        'Show class gpa',
+        'Exit']
 
 
 def print_menu(stdscr, selected_row):
@@ -197,7 +204,7 @@ def print_menu(stdscr, selected_row):
 
     for index, row in enumerate(menu):
         x = w//2 - len(row)//2
-        y = h//2 - len(menu) + index
+        y = h//2 - len(menu)//2 + index
 
         if index == selected_row:
             stdscr.attron(curses.color_pair(1))
@@ -210,6 +217,9 @@ def print_menu(stdscr, selected_row):
 
 
 def main(stdscr):
+    students = []
+    courses = []
+
     curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
@@ -226,13 +236,66 @@ def main(stdscr):
             current_row -= 1
         elif key == curses.KEY_DOWN and current_row < len(menu):
             current_row += 1 
-        elif key == curses.KEY_ENTER or key in [10, 13]:
+        elif (key == curses.KEY_ENTER or key in [10, 13])  and current_row == 0:
+            stdscr.clear()
+            curses.echo()
+
+            std_num = std_num()
+            for i in range(std_num):
+                stdscr.addstr(0, 0, f"Student number {i} info is: ")
+                stdscr.addstr(4, 0, "Student name: ")
+                student_name = stdscr.getstr(5, 0).decode()
+                stdscr.addstr(6, 0, 'Student DoB: ')
+                dob = stdscr.getstr(7, 0).decode()
+
+                students.append(Student(student_name, dob))
+                stdscr.refresh()
+
             stdscr.refresh()
             stdscr.getch()
 
-            if current_row == len(menu) - 1:
-                break
-    
+        elif (key == curses.KEY_ENTER or key in [10, 13])  and current_row == 1:
+            stdscr.clear()
+            curses.echo()
+
+            course_num = course_num()
+
+            for i in range(course_num):
+                stdscr.addstr(0, 0, f"Course number {i} info is: ")
+                stdscr.addstr(1, 0, "Course name: ")
+                course_name = stdscr.getstr(2, 0).decode()
+                stdscr.addstr(3, 0, "Course credit: ")
+                course_credit = stdscr.getstr(4, 0).decode()
+
+                courses.append(Course(course_name, course_credit))
+                stdscr.refresh()
+        elif (key == curses.KEY_ENTER or key in [10, 13]) and current_row == 2:
+            stdscr.clear()
+            curses.echo()
+
+            stdscr.addstr(0, 0, "Which course do you want to add marks")
+            course_name = stdscr.getstr(1, 0).decode()
+            course_index = contain_course(course_name, courses)
+            if course_index < 0:
+                stdscr.addstr(2, 0, "This course does not exist")
+            else:
+                courses[course_index].set_mark(students, stdscr)
+
+        elif (key == curses.KEY_ENTER or key in [10, 13]) and current_row == 3:
+            stdscr.clear()
+            curses.echo()
+
+            for index, student in enumerate(students):
+                stdscr.addstr(index, 0, f"{student.get_id()} : {student.get_name()}")
+        elif (key == curses.KEY_ENTER or key in [10, 13]) and current_row == 4:
+            stdscr.clear()
+            curses.echo()
+
+            for index, course in enumerate(courses):
+                stdscr.addstr(index, 0, f"{course.get_id()} : {course.get_name()}")
+        elif key == curses.KEY_ENTER and current_row == 5:
+            break
+
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
 
@@ -260,7 +323,7 @@ if __name__ == "__main__":
     
     user_input = input("- Do you want to input marks for any course ? ")
     courseIndex = contain_course(user_input, courses)
-    if courseIndex < -1:
+    if courseIndex < 0:
         print("- There is no course like that")
     else:
         courses[courseIndex].set_mark(students)
