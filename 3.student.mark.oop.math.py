@@ -123,7 +123,7 @@ class Course:
 
     def set_mark(self, students, stdscr):
         for student in students:
-            std_name = student.getName()
+            std_name = student.get_name()
             stdscr.addstr(3, 0, f"Mark of {student.get_name()}: ")
             mark = stdscr.getstr(4, 0).decode()
             while not(self.__validate_mark(mark)):
@@ -132,7 +132,9 @@ class Course:
             
             mark = self.floor_mark(mark)
             self.__marks.update({std_name: mark})
-            student.updateMark(self.__name, self.__credit, mark)
+            student.update_mark(self.__name, self.__credit, mark)
+
+            # stdscr.refresh()
      
     def describe(self):
         print(f'- The marks for {self.__name} is:')
@@ -140,31 +142,32 @@ class Course:
             print(f'   + {key}: {value}')
 
 
-def std_num():
-    num = int(input("- The number of students in the class: "))
+def std_num(stdscr):
+    stdscr.addstr(0, 0, '- The number of students in the class: ')
+    num = int(stdscr.getstr(1, 0).decode())
     return num
 
 
-def course_num():
-    num = int(input("- The number of courses is: "))
+def course_num(stdscr):
+    stdscr.addstr(0, 0, '- The number of courses is: ')
+    num = int(stdscr.getstr(1, 0).decode())
     return num
 
 
-def show_course(courses):
-    print('- All courses that this class is currently taking: ')
-    for course in courses:
-        print(f'   + {course.get_id()}. {course.get_name()} ')
+def show_course(courses, stdscr):
+    stdscr.addstr(0, 0, '- All courses that this class is currently taking: ')
+    for index, course in enumerate(courses):
+        stdscr.addstr(index + 2, 0, f"{course.get_id()} : {course.get_name()}")
 
 
-def show_students(students):
-    print('- Student of this class: ')
-    for student in students:
-        print(f'   + {student.get_id()}. {student.get_name()} ')
-
+def show_students(students, stdscr):
+    stdscr.addstr(0, 0, '- Student of this class: ')
+    for index, student in enumerate(students):
+        stdscr.addstr(index + 2, 0, f"{student.get_id()} : {student.get_name()}")
 
 def contain_course(course, courses):
     for i in range(len(courses)):
-        if course == courses[i].getName():
+        if course == courses[i].get_name():
             return i
     return -1
 
@@ -176,16 +179,17 @@ def sort(students):
                 students[j], students[j + 1] = students[j + 1], students[j] 
 
 
-def show_gpa(students):
+def show_gpa(students, stdscr):
     std_desc = []
-    print('Gpa of this class : ')
+
+    stdscr.addstr(0, 0, '- Gpa of this class: ')
     for student in students:
         std_desc.append(student)
 
     sort(std_desc)
             
-    for std in std_desc:
-        print(f'   + {std.get_name()}: {std.gpa()}')
+    for idx, std in enumerate(std_desc):
+        stdscr.addstr(idx + 1, 0, f'   + {std.get_name()}: {std.gpa()}')
 
 
 menu = ['Number of student',
@@ -219,11 +223,10 @@ def print_menu(stdscr, selected_row):
 def main(stdscr):
     students = []
     courses = []
+    current_row = 0
 
     curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-
-    current_row = 0
 
     print_menu(stdscr, current_row)
 
@@ -236,44 +239,48 @@ def main(stdscr):
             current_row -= 1
         elif key == curses.KEY_DOWN and current_row < len(menu):
             current_row += 1 
-        elif (key == curses.KEY_ENTER or key in [10, 13])  and current_row == 0:
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 0:
             stdscr.clear()
             curses.echo()
 
-            std_num = std_num()
-            for i in range(std_num):
-                stdscr.addstr(0, 0, f"Student number {i} info is: ")
-                stdscr.addstr(4, 0, "Student name: ")
-                student_name = stdscr.getstr(5, 0).decode()
-                stdscr.addstr(6, 0, 'Student DoB: ')
-                dob = stdscr.getstr(7, 0).decode()
+            std_number = std_num(stdscr)
+
+            for i in range(std_number):
+                stdscr.clear()
+                stdscr.addstr(0, 0, f"- Student number {i + 1} info is: ")
+                stdscr.addstr(2, 0, "   + Student name: ")
+                student_name = stdscr.getstr(3, 0).decode()
+                stdscr.addstr(4, 0, '   + Student DoB: ')
+                dob = stdscr.getstr(5, 0).decode()
 
                 students.append(Student(student_name, dob))
                 stdscr.refresh()
 
-            stdscr.refresh()
             stdscr.getch()
 
-        elif (key == curses.KEY_ENTER or key in [10, 13])  and current_row == 1:
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 1:
             stdscr.clear()
             curses.echo()
 
-            course_num = course_num()
+            course_number = course_num(stdscr)
 
-            for i in range(course_num):
-                stdscr.addstr(0, 0, f"Course number {i} info is: ")
-                stdscr.addstr(1, 0, "Course name: ")
+            for i in range(course_number):
+                stdscr.addstr(0, 0, f"- Course number {i + 1} info is: ")
+                stdscr.addstr(1, 0, f"   + Course  {i + 1} name: ")
                 course_name = stdscr.getstr(2, 0).decode()
-                stdscr.addstr(3, 0, "Course credit: ")
+                stdscr.addstr(3, 0, f"   + Course {i + 1} credit: ")
                 course_credit = stdscr.getstr(4, 0).decode()
 
                 courses.append(Course(course_name, course_credit))
                 stdscr.refresh()
-        elif (key == curses.KEY_ENTER or key in [10, 13]) and current_row == 2:
+
+            stdscr.getch()
+
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 2:
             stdscr.clear()
             curses.echo()
 
-            stdscr.addstr(0, 0, "Which course do you want to add marks")
+            stdscr.addstr(0, 0, "- Which course do you want to add marks")
             course_name = stdscr.getstr(1, 0).decode()
             course_index = contain_course(course_name, courses)
             if course_index < 0:
@@ -281,57 +288,37 @@ def main(stdscr):
             else:
                 courses[course_index].set_mark(students, stdscr)
 
-        elif (key == curses.KEY_ENTER or key in [10, 13]) and current_row == 3:
+            stdscr.getch()
+
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 3:
             stdscr.clear()
             curses.echo()
 
-            for index, student in enumerate(students):
-                stdscr.addstr(index, 0, f"{student.get_id()} : {student.get_name()}")
-        elif (key == curses.KEY_ENTER or key in [10, 13]) and current_row == 4:
+            show_students(students, stdscr)
+
+            stdscr.getch()
+
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 4:
             stdscr.clear()
             curses.echo()
 
-            for index, course in enumerate(courses):
-                stdscr.addstr(index, 0, f"{course.get_id()} : {course.get_name()}")
-        elif key == curses.KEY_ENTER and current_row == 5:
+            show_course(courses, stdscr)
+
+            stdscr.getch()
+
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 5:
+            stdscr.clear()
+            curses.echo()
+
+            show_gpa(students, stdscr)
+
+            stdscr.getch()
+
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 6:
             break
 
-    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        print_menu(stdscr, current_row)
 
 
 if __name__ == "__main__":
     curses.wrapper(main)
-    students = []
-    courses = []
-
-    for i in range(std_num()):
-        print('- Enter information of this student: ')
-
-        name = input('   + Enter student name: ')
-        dob = input('   + Enter student dob: ')
-    
-        students.append(Student(name, dob))
-
-    for i in range(course_num()):
-        print('- Enter information of this course: ')
-        name = input('   + Enter course name: ')
-        # while(not(course.repOk(name))):
-        #     print('Your input is not in correct form. Please re-enter')
-        #     name = input('   + Enter course name: ')
-        credit = input('   + Enter course number of credit: ')
-        courses.append(Course(name, credit))
-    
-    user_input = input("- Do you want to input marks for any course ? ")
-    courseIndex = contain_course(user_input, courses)
-    if courseIndex < 0:
-        print("- There is no course like that")
-    else:
-        courses[courseIndex].set_mark(students)
-        courses[courseIndex].describe()
-
-    ans = input("- Do you want to print out students and courses ? yes/no ")
-    if ans == "yes":
-        show_students(students)
-        show_course(courses)
-
-    show_gpa(students)
