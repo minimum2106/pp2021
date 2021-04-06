@@ -15,16 +15,16 @@ class Student:
             return True
         return False
 
-    def __init__(self, name, DoB):
+    def __init__(self, name, dob):
         if not(self.__validate_name(name)):
             print("Name is not valid")
             return
-        if not(self.__validate_dob(DoB)):
+        if not(self.__validate_dob(dob)):
             print("DoB is not valid")
             return
 
         self.__id = ++self.__id_count
-        self.__DoB = DoB
+        self.__DoB = dob
         self.__name = name
         self.__marks = {}
     
@@ -50,13 +50,13 @@ class Student:
         self.__marks.update({course: [credit, mark]})
 
     def gpa(self):
-        total = 0
-        sum = 0
+        denominator = 0
+        numerator = 0
         for value in self.__marks.values():
-            total += value[0]
-            sum += value[0] * value[1]
+            denominator += value[0]
+            numerator += value[0] * value[1]
         
-        return sum / total
+        return numerator / denominator
 
     # @staticmethod
     # def repOk(name, dob):
@@ -164,6 +164,7 @@ def show_students(students, stdscr):
     stdscr.addstr(0, 0, '- Student of this class: ')
     for index, student in enumerate(students):
         stdscr.addstr(index + 2, 0, f"{student.get_id()} : {student.get_name()}")
+
 
 def contain_course(course, courses):
     for i in range(len(courses)):
