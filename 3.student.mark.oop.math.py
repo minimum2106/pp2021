@@ -5,12 +5,14 @@ import curses
 class Student:
     __id_count = 0
 
-    def __validate_name(self, name):
+    @staticmethod
+    def __validate_name(name):
         if len(name) > 1:
             return True
         return False
 
-    def __validate_dob(self, dob):
+    @staticmethod
+    def __validate_dob(dob):
         if len(dob) > 1:
             return True
         return False
@@ -68,17 +70,20 @@ class Student:
 class Course:
     __id_count = 0
 
-    def __validate_name(self, name):
+    @staticmethod
+    def __validate_name(name):
         if len(name) > 1:
             return True
         return False
 
-    def __validate_mark(self, mark):
+    @staticmethod
+    def __validate_mark(mark):
         if 0 <= float(mark) <= 100:
             return True
         return False
 
-    def __validate_credit(self, credit):
+    @staticmethod
+    def __validate_credit(credit):
         if 1 <= int(credit) <= 4:
             return True
         return False 
@@ -101,7 +106,8 @@ class Course:
     #         return True
     #     return False
 
-    def floor_mark(self, mark):
+    @staticmethod
+    def floor_mark(mark):
         return math.floor(float(mark) * 10) / 10
 
     def get_name(self):
