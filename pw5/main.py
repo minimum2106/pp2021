@@ -17,9 +17,6 @@ menu = ['Number of student',
         'Exit']
 
 
-path = "C:/Users/Tran Hong Quan/PycharmProjects/pp2021/pw5/text_file"
-
-
 def contain_course(course, courses):
     for i in range(len(courses)):
         if course == courses[i].get_name():
@@ -65,7 +62,7 @@ def main(stdscr):
             current_row -= 1
         elif key == curses.KEY_DOWN and current_row < len(menu):
             current_row += 1
-        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 0:
+        elif key == curses.KEY_ENTER and current_row == 0:
             stdscr.clear()
             curses.echo()
 
@@ -88,7 +85,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 1:
+        elif key == curses.KEY_ENTER and current_row == 1:
             stdscr.clear()
             curses.echo()
 
@@ -110,7 +107,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 2:
+        elif key == curses.KEY_ENTER and current_row == 2:
             stdscr.clear()
             curses.echo()
 
@@ -129,7 +126,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 3:
+        elif key == curses.KEY_ENTER and current_row == 3:
             stdscr.clear()
             curses.echo()
 
@@ -137,7 +134,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 4:
+        elif key == curses.KEY_ENTER and current_row == 4:
             stdscr.clear()
             curses.echo()
 
