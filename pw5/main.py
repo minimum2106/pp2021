@@ -17,6 +17,9 @@ menu = ['Number of student',
         'Exit']
 
 
+path = "C:/Users/Tran Hong Quan/PycharmProjects/pp2021/pw5/text_file"
+
+
 def contain_course(course, courses):
     for i in range(len(courses)):
         if course == courses[i].get_name():
@@ -41,16 +44,6 @@ def print_menu(stdscr, selected_row):
             stdscr.addstr(y, x, row)
 
     stdscr.refresh()
-
-
-with open("student.txt", "w") as sf:
-    pass
-
-with open("course.txt", "w") as cf:
-    pass
-
-with open("mark.txt", "w") as mf:
-    pass
 
 
 def main(stdscr):
@@ -89,6 +82,10 @@ def main(stdscr):
                 students.append(Student(student_name, dob))
                 stdscr.refresh()
 
+            with open("student.txt", "w") as sf:
+                for student in students:
+                    sf.write(f"{student.get_id()} : {student.get_name()} : {student.get_dob()} \n")
+
             stdscr.getch()
 
         elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 1:
@@ -107,6 +104,10 @@ def main(stdscr):
                 courses.append(Course(course_name, course_credit))
                 stdscr.refresh()
 
+            with open("course.txt", "w") as cf:
+                for course in courses:
+                    cf.write(f"{course.get_id()}: {course.get_name()} with {course.get_credit()} credit \n")
+
             stdscr.getch()
 
         elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 2:
@@ -120,6 +121,11 @@ def main(stdscr):
                 stdscr.addstr(2, 0, "This course does not exist")
             else:
                 courses[course_index].set_mark(students, stdscr)
+                with open("mark.txt", "w") as mf:
+                    mf.write(f"{course_name} \n")
+                    for name, mark in courses[course_index].get_mark().items():
+                        mf.write(f"{name} : {mark} \n")
+                    mf.write("\n")
 
             stdscr.getch()
 

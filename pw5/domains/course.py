@@ -76,6 +76,9 @@ class Course:
 
             # stdscr.refresh()
 
+    def get_mark(self):
+        return self.__marks
+
     def describe(self):
         print(f'- The marks for {self.__name} is:')
         for key, value in self.__marks.items():
