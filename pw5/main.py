@@ -157,9 +157,10 @@ def main(stdscr):
 
         elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 6:
             files = [student.txt, mark.txt, course.txt]
-            with zipfile.ZipFile("student.dat", "w") as decompressed_file:
+
+            with zipfile.ZipFile("student.dat", "w") as compressed_file:
                 for file in files:
-                    decompressed_file.write(file)
+                    compressed_file.write(file)
 
             break
 

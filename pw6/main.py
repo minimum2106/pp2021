@@ -1,4 +1,5 @@
 import curses
+import pickle
 import zipfile
 import os
 
@@ -52,9 +53,10 @@ def main(stdscr):
     curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
-    if os.path.isfile('students.dat'):
-        zip_file = zipfile.ZipFile('students.dat', 'r')
-        zip_file.extractall()
+    if os.path.isfile('students.dat', 'rb'):
+        with open('students.dat', 'rb') as file:
+            students = pickle.load(file)
+            courses = pickle.load(file)
 
     print_menu(stdscr, current_row)
 
@@ -156,10 +158,9 @@ def main(stdscr):
             stdscr.getch()
 
         elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 6:
-            files = [student.txt, mark.txt, course.txt]
-            with zipfile.ZipFile("student.dat", "w") as decompressed_file:
-                for file in files:
-                    decompressed_file.write(file)
+            with open("student.dat", "wb") as compressed_file:
+                pickle.dump(students, compressed_file)
+                pickle.dump(courses, compressed_file)
 
             break
 
