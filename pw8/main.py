@@ -55,10 +55,16 @@ def main(stdscr):
     curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
-    if os.path.isfile('students.pickle'):
+    if os.path.exists('students.pickle'):
         with open('students.pickle', 'rb') as file:
-            students = pickle.load(file)
-            courses = pickle.load(file)
+            students_in_file = pickle.load(file)
+            for student in students_in_file:
+                students.append(student)
+            courses_in_file = pickle.load(file)
+            for course in courses_in_file:
+                courses.append(course)
+    else:
+        file = open('students.pickle', 'wb')
 
     print_menu(stdscr, current_row)
 
@@ -66,6 +72,10 @@ def main(stdscr):
         key = stdscr.getch()
 
         stdscr.clear()
+
+        thread = BackgroundThread('students.pickle', stdscr)
+        thread.start()
+        thread.add_objects(students, courses)
 
         if key == curses.KEY_UP and current_row > 0:
             current_row -= 1
@@ -160,18 +170,11 @@ def main(stdscr):
             stdscr.getch()
 
         elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 6:
-            on = False
-
+            thread.join()
+            file.close()
             break
 
         print_menu(stdscr, current_row)
-
-    thread = BackgroundThread('students.pickle')
-    thread.start()
-    while on:
-        thread.add_objects(students, courses)
-
-    thread.join()
 
 
 if __name__ == "__main__":
