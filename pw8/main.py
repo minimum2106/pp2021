@@ -1,6 +1,5 @@
 import curses
 import pickle
-import zipfile
 import os
 
 from output import show_students, show_course, show_gpa
@@ -8,6 +7,7 @@ from input import std_num, course_num
 
 from domains.student import Student
 from domains.course import Course
+from domains.background_thread import BackgroundThread
 
 
 menu = ['Number of student',
@@ -17,6 +17,8 @@ menu = ['Number of student',
         'Show course list',
         'Show class gpa',
         'Exit']
+
+on = True
 
 
 def contain_course(course, courses):
@@ -53,8 +55,8 @@ def main(stdscr):
     curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
-    if os.path.isfile('students.dat', 'rb'):
-        with open('students.dat', 'rb') as file:
+    if os.path.isfile('students.pickle'):
+        with open('students.pickle', 'rb') as file:
             students = pickle.load(file)
             courses = pickle.load(file)
 
@@ -69,7 +71,7 @@ def main(stdscr):
             current_row -= 1
         elif key == curses.KEY_DOWN and current_row < len(menu):
             current_row += 1
-        elif key == curses.KEY_ENTER and current_row == 0:
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 0:
             stdscr.clear()
             curses.echo()
 
@@ -92,7 +94,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif key == curses.KEY_ENTER and current_row == 1:
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 1:
             stdscr.clear()
             curses.echo()
 
@@ -114,7 +116,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif key == curses.KEY_ENTER and current_row == 2:
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 2:
             stdscr.clear()
             curses.echo()
 
@@ -133,7 +135,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif key == curses.KEY_ENTER and current_row == 3:
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 3:
             stdscr.clear()
             curses.echo()
 
@@ -141,7 +143,7 @@ def main(stdscr):
 
             stdscr.getch()
 
-        elif key == curses.KEY_ENTER and current_row == 4:
+        elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 4:
             stdscr.clear()
             curses.echo()
 
@@ -158,13 +160,18 @@ def main(stdscr):
             stdscr.getch()
 
         elif (key == curses.KEY_ENTER or key in [10, 17]) and current_row == 6:
-            with open("student.dat", "wb") as compressed_file:
-                pickle.dump(students, compressed_file)
-                pickle.dump(courses, compressed_file)
+            on = False
 
             break
 
         print_menu(stdscr, current_row)
+
+    thread = BackgroundThread('students.pickle')
+    thread.start()
+    while on:
+        thread.add_objects(students, courses)
+
+    thread.join()
 
 
 if __name__ == "__main__":
